@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+
 
 
  /** 
@@ -22,6 +24,7 @@ class RegistrationController extends AbstractFOSRestController
 {
     /**
      * @Route("/register", name="app_register",methods={"POST"})
+     * @Security("has_role('ROLE_SUPERADMIN') or has_role('ROLE_AdminPartenaire')")
      */
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, ValidatorInterface $validator,SerializerInterface $serializer,  EntityManagerInterface $entityManager): Response
     {
@@ -40,7 +43,7 @@ class RegistrationController extends AbstractFOSRestController
             return new Response($errorsString);
         }
         
-        if((!$form->get('plainPassword')->getData()) || ($form->get('plainPassword')->getData()) < 6) {
+        if((!$form->get('plainPassword')->getData()) || strlen($form->get('plainPassword')->getData()) < 6) {
             if(!$form->get('plainPassword')->getData())
             {
                 $error = "le mot de passe ne doit pas etre vide.";
@@ -51,8 +54,7 @@ class RegistrationController extends AbstractFOSRestController
                 $error= "Mot de Passe doit etre superieur ou égal à 6 caractéres.";
             }
         return $this->handleView($this->view(['erreur'=>$error],Response::HTTP_UNAUTHORIZED));
-
-            
+   
         }
         
 
@@ -68,14 +70,16 @@ class RegistrationController extends AbstractFOSRestController
         if($utilisateur->getRoles()[0]=='ROLE_SUPERADMIN'){
             $user->setEntreprise('WARI');
             $user->setRoles(['ROLE_CAISSIER']);
+            $user->setCompte('WARI');
 
         }
         else if($utilisateur->getRoles()[0]=='ROLE_AdminPartenaire'){
                 $user->setEntreprise($utilisateur->getEntreprise());
                 $user->setRoles(['ROLE_USER']);
+                $user->setCompte($utilisateur->getCompte());
 
         }
-        //$user->setRoles(['ROLE_SUPERADMIN']);
+       
             $user->setUpdatedAt(new \Datetime());
             $user->setImageFile($file);
             $entityManager = $this->getDoctrine()->getManager();
@@ -99,6 +103,8 @@ class RegistrationController extends AbstractFOSRestController
     }
     /** 
      * @Route("/user/{id}", name="statut", methods={"PUT"})
+     * @Security("has_role('ROLE_SUPERADMIN') or has_role('ROLE_AdminPartenaire')")
+
      */
     public function statut(User $user,EntityManagerInterface $entityManager)
     {

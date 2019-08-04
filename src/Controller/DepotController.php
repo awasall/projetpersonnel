@@ -19,6 +19,7 @@ class DepotController extends FOSRestController
 {
     /**
      *  @Route("/api/depot",name="depot",methods={"POST"})
+     * @Security("has_role('ROLE_CAISSIER')")
      */
     public function versement(Request $request,ValidatorInterface $validator, SerializerInterface $serializer)
     {

@@ -17,9 +17,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+
 
 /**
  * @Route("/api")
+ * @Security("has_role('ROLE_SUPERADMIN')")
  */
 
 class PartenaireController extends AbstractFOSRestController
@@ -42,10 +45,7 @@ class PartenaireController extends AbstractFOSRestController
 
             return new Response($errorsString);
         }
-        $errors = [];
-        
        
-     
         if ($form->isSubmitted() && $form->isValid()) {
             //$partenaire->setImageFile($file);
             $comptes = new Compte();
@@ -75,7 +75,6 @@ class PartenaireController extends AbstractFOSRestController
             $user->setImageFile($file);
 
             $entityManager->persist($user);
-
             $entityManager->flush();
             return $this->handleView($this->view(['status'=>'le partenaire a été crée'],Response::HTTP_CREATED));
         }
