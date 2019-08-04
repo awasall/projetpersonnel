@@ -1,0 +1,13 @@
+composer req api make
+composer require migrations
+composer require symfony/serializer
+composer require friendsofsymfony/rest-bundle
+composer require symfony/web-server-bundle --dev
+composer require form annotations
+composer require --dev symfony/browser-kit symfony/css-selector
+composer require security
+composer require vich/uploader-bundle
+composer require --dev symfony/maker-bundle
+composer require lexik/jwt-authentication-bundle
+composer require symfony/validator doctrine/annotations
+
