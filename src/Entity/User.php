@@ -9,11 +9,14 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Vich\UploaderBundle\Entity\File as EmbeddedFile;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @Vich\Uploadable
- * @UniqueEntity(fields={"username"}, message="There is already an account with this username")
+ * @UniqueEntity(fields={"username"}, message="ce username existe déja")
+ * @UniqueEntity(fields={"telephone"}, message="ce numéro de telephone existe déja")
+
  */
 class User implements UserInterface
 {
@@ -26,6 +29,11 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\NotBlank(message="Le username ne doit pas être vide")
+     *  @Assert\Email(
+     *     message = "The email '{{ value }}' is not a valid email.",
+     *     checkMX = true
+     * )
      */
     private $username;
 
@@ -37,32 +45,45 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le prenom ne doit pas être vide")
+
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le nom ne doit pas être vide")
+
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le numéro de telephone ne doit pas être vide")
+
      */
     private $telephone;
 
     /**
      * @ORM\Column(type="string", length=255)
+     
      */
     private $imageName;
 
     /** 
      * @var File
      * @Vich\UploadableField(mapping="products_image", fileNameProperty="imageName")
+     
+     * @Assert\File(
+     *     mimeTypes={"image/jpeg", "image/png", "image/gif"},
+     *     mimeTypesMessage = "Please upload a valid Image"
+     *     )
      */
     private $imageFile;
 
@@ -88,6 +109,8 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="vous n'avez pas saisi l'adresse")
+
      */
     private $adresse;
 
@@ -158,7 +181,6 @@ class User implements UserInterface
 
         return $this;
     }
-
     /**
      * @see UserInterface
      */

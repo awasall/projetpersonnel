@@ -27,7 +27,7 @@ class PartenaireController extends AbstractFOSRestController
     /**
      * @Route("/partenaire", name="partenaire", methods={"POST"})
      */
-    public function ajout(Request $request, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder): Response
+    public function ajout(Request $request, ValidatorInterface $validator, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder): Response
     {
         $partenaire = new Partenaire();
         $form = $this->createForm(PartenaireType::class, $partenaire);
@@ -36,6 +36,16 @@ class PartenaireController extends AbstractFOSRestController
         $data=$request->request->all();
         $file=$request->files->all()['imageFile'];
         $form->submit($data);
+        $errors = $validator->validate($partenaire);
+        if (count($errors) > 0) {
+            $errorsString = (string) $errors;
+
+            return new Response($errorsString);
+        }
+        $errors = [];
+        
+       
+     
         if ($form->isSubmitted() && $form->isValid()) {
             //$partenaire->setImageFile($file);
             $comptes = new Compte();
@@ -44,7 +54,10 @@ class PartenaireController extends AbstractFOSRestController
             $comptes->setNumerCompte($data);
            $comptes->setPartenaire($partenaire);
             //$comptes->setPartenaire($partenaire->getId());
-
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($partenaire);
+            $entityManager->persist($comptes);
+            $entityManager->flush();
             $user = new User();
             $user->setUsername($partenaire->getEmail());
             $user->setPassword($passwordEncoder->encodePassword($user, 'passer'));
@@ -61,11 +74,8 @@ class PartenaireController extends AbstractFOSRestController
             $user->setStatut('actif');
             $user->setImageFile($file);
 
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
-            $entityManager->persist($comptes);
 
-            $entityManager->persist($partenaire);
             $entityManager->flush();
             return $this->handleView($this->view(['status'=>'le partenaire a été crée'],Response::HTTP_CREATED));
         }

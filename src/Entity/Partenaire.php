@@ -47,7 +47,7 @@ class Partenaire
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="La raison sociale ne doit pas être vide")
+     * @Assert\NotBlank(message="La l'adresse ne doit pas être vide")
 
      */
     private $adresse;
