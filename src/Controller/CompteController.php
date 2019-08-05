@@ -22,7 +22,10 @@ class CompteController extends FOSRestController
         $form=$this->createForm(CompteType::class,$compte);
         $data=json_decode($request->getContent(),true);
         $form->submit($data);
-        
+        if(!$compte->getPartenaire()){
+            return $this->handleView($this->view(['erreur'=>'ce partenaire nexiste pas'],Response::HTTP_UNAUTHORIZED));
+  
+        }
         if($form->isSubmitted() && $form->isValid()){
             $compte->setSolde("0");
             $data=date("Y").date("m").date("d").date("H").date("i").date("s");

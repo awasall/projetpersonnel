@@ -94,10 +94,10 @@ class RegistrationController extends AbstractFOSRestController
      * @Route("/login", name="login", methods={"POST"})
      */
     public function login(Request $request)
-    {
+    {  
         $user = $this->getUser();
         return $this->json([
-            'username' => $user->getUsername(),
+            'email' => $user->getUsername(),
             'roles' => $user->getRoles()
         ]);
     }

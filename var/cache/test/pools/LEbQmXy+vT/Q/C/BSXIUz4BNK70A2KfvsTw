@@ -1,0 +1,67 @@
+<?php
+
+namespace Symfony\Component\VarExporter\Internal;
+
+return $getExpiry ? PHP_INT_MAX : Hydrator::hydrate(
+    $o = [
+        clone (($p = &Registry::$prototypes)['ApiPlatform\\Core\\Annotation\\ApiResource'] ?? Registry::p('ApiPlatform\\Core\\Annotation\\ApiResource')),
+        clone ($p['Vich\\UploaderBundle\\Mapping\\Annotation\\Uploadable'] ?? Registry::p('Vich\\UploaderBundle\\Mapping\\Annotation\\Uploadable')),
+        clone ($p['Doctrine\\ORM\\Mapping\\Entity'] ?? Registry::p('Doctrine\\ORM\\Mapping\\Entity')),
+        clone ($p['Symfony\\Bridge\\Doctrine\\Validator\\Constraints\\UniqueEntity'] ?? Registry::p('Symfony\\Bridge\\Doctrine\\Validator\\Constraints\\UniqueEntity')),
+        clone $p['Symfony\\Bridge\\Doctrine\\Validator\\Constraints\\UniqueEntity'],
+        clone $p['Symfony\\Bridge\\Doctrine\\Validator\\Constraints\\UniqueEntity'],
+        clone $p['Symfony\\Bridge\\Doctrine\\Validator\\Constraints\\UniqueEntity'],
+    ],
+    null,
+    [
+        'stdClass' => [
+            'repositoryClass' => [
+                2 => 'App\\Repository\\PartenaireRepository',
+            ],
+            'message' => [
+                3 => 'cet email existe déja.',
+                'Tce ninea existe deja.',
+                'existe deja.',
+                'ce numéro de téléphone existe déja.',
+            ],
+            'fields' => [
+                3 => [
+                    'email',
+                ],
+                [
+                    'ninea',
+                ],
+                [
+                    'raisonsociale',
+                ],
+                [
+                    'telephone',
+                ],
+            ],
+            'groups' => [
+                3 => [
+                    'Default',
+                ],
+                [
+                    'Default',
+                ],
+                [
+                    'Default',
+                ],
+                [
+                    'Default',
+                ],
+            ],
+        ],
+    ],
+    [
+        $o[0],
+        $o[1],
+        $o[2],
+        $o[3],
+        $o[4],
+        $o[5],
+        $o[6],
+    ],
+    []
+);

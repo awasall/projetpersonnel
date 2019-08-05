@@ -71,19 +71,20 @@ class User implements UserInterface
     private $telephone;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     
+     * @ORM\Column(type="string", length=255,nullable=true)
+    
      */
     private $imageName;
 
     /** 
      * @var File
      * @Vich\UploadableField(mapping="products_image", fileNameProperty="imageName")
-     
      * @Assert\File(
      *     mimeTypes={"image/jpeg", "image/png", "image/gif"},
      *     mimeTypesMessage = "Please upload a valid Image"
      *     )
+     
+    
      */
     private $imageFile;
 
@@ -199,7 +200,6 @@ class User implements UserInterface
     }
 
     
-
     public function getPrenom(): ?string
     {
         return $this->prenom;

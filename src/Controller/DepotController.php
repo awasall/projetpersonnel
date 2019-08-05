@@ -34,12 +34,16 @@ class DepotController extends FOSRestController
                     'Content-Type' => 'application/json'
                 ]);
             }
+            if(!$depot->getCompte()){
+                return $this->handleView($this->view(['erreur'=>'ce compte nexiste pas'],Response::HTTP_UNAUTHORIZED));
+      
+            }
         if($form->isSubmitted() && $form->isValid()){
             
             $depot->setDateDepot(new \Datetime());
             
-            //$user = $this->getUser();
-            //$depot->setCaissier($user->getId());
+            $user = $this->getUser();
+            $depot->setCaissier($user->getId());
             //var_dump($depot);die();
             $em=$this->getDoctrine()->getManager();
             $em->persist($depot);
