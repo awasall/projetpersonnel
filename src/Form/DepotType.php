@@ -19,9 +19,7 @@ class DepotType extends AbstractType
             ->add('compte',EntityType::class,[
                 'class'=>Compte::class
             ])
-            ->add('utilisateur',EntityType::class,[
-                'class'=>User::class
-            ])
+           
             ->add('save',SubmitType::class)
         ;
     }

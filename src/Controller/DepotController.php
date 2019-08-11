@@ -43,7 +43,7 @@ class DepotController extends FOSRestController
             $depot->setDateDepot(new \Datetime());
             
             $user = $this->getUser();
-            $depot->setCaissier($user->getId());
+            $depot->setUtilisateur($user);
             //var_dump($depot);die();
             $em=$this->getDoctrine()->getManager();
             $em->persist($depot);

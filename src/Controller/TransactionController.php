@@ -5,6 +5,7 @@ use App\Entity\User;
 use App\Entity\Compte;
 use App\Entity\Transaction;
 use App\Form\TransactionType;
+use App\Form\RetraitType;
 use App\Repository\TarifRepository;
 use App\Repository\TransactionRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-
+use Doctrine\ORM\EntityManagerInterface;
 
 class TransactionController extends AbstractFOSRestController
 {
@@ -60,8 +61,9 @@ class TransactionController extends AbstractFOSRestController
             $user = $this->getUser();
             $transaction->setUserEnv($user);
             $transaction->setCompteEnv($user->getCompte());
-            $compte=$transaction->getCompteEnv();
-            $val=$compte->getSolde()+$transaction->getMontant()-$transaction->getcommisionEnv();
+            $compte=$user->getCompte();
+            //var_dump($compte);die();
+            $val=$compte->getSolde()-$transaction->getMontant()+$transaction->getcommisionEnv();
             $compte->setSolde($val);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($compte);
@@ -73,7 +75,51 @@ class TransactionController extends AbstractFOSRestController
         return $this->handleView($this->view($form->getErrors()));
 
     }
+    //retrait
+    /** 
+     * @Route("/api/retrait/{id}", name="statut", methods={"PUT"})
+     */
+    public function retrait(Request $request,TarifRepository $transy,Transaction $transaction,ValidatorInterface $validator,EntityManagerInterface $entityManager)
+    {
+        $form = $this->createForm(RetraitType::class, $transaction);
+        $form->handleRequest($request);
+        $data=json_decode($request->getContent(),true);
+        $form->submit($data);
+        $errors = $validator->validate($transaction);
+        
+        if (count($errors) > 0) {
+            $errorsString = (string) $errors;
 
+            return new Response($errorsString);
+        }
+        if ($form->isSubmitted() && $form->isValid()) {
+       $transaction->setDateRetrait(new \DateTime());
+       $transaction->setStatut("retirer");
+       $valeur=$transaction->getMontant();
+            $value = $transy->findFrais($valeur);
+            $transaction->setcommisionEnv($value[0]->getValeur()*10/100);
+            $transaction->setcommissionRetr($value[0]->getValeur()*20/100);
+            $transaction->setcommissionPropre($value[0]->getValeur()*30/100);
+            $transaction->setCommisionEtat($value[0]->getValeur()*40/100);
+            $transaction->setFrais($value[0]->getValeur());
+       $user = $this->getUser();
+       $transaction->setUserEnv($user);
+       $transaction->setCompteEnv($user->getCompte());
+       $compte=$user->getCompte();
+       //var_dump($compte);die();
+       $val=$compte->getSolde()+$transaction->getMontant()+$transaction->getCommisionRetr();
+       $compte->setSolde($val);
+       $entityManager->persist($compte);
+        $entityManager->persist($transaction);
+        $entityManager->flush();
+        return $this->handleView($this->view(['status'=>'Retrait Effectué'],Response::HTTP_CREATED));
+
+    }
+    return $this->handleView($this->view($form->getErrors()));
+}
+
+
+    
     /**
      * @Route("/{id}", name="transaction_show", methods={"GET"})
      */
