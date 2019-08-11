@@ -18,8 +18,9 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-
-
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 /**
  * @Route("/api")
  * @Security("has_role('ROLE_SUPERADMIN')")
@@ -32,7 +33,9 @@ class PartenaireController extends AbstractFOSRestController
      */
     public function ajout(Request $request, ValidatorInterface $validator, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder): Response
     {
+        
         $partenaire = new Partenaire();
+        
         $form = $this->createForm(PartenaireType::class, $partenaire);
         $form->handleRequest($request);
         //$data=json_decode($request->getContent(),true);
@@ -48,15 +51,17 @@ class PartenaireController extends AbstractFOSRestController
        
         if ($form->isSubmitted() && $form->isValid()) {
             //$partenaire->setImageFile($file);
-            $comptes = new Compte();
-            $comptes->setSolde("0");
+            $compte = new Compte();
+            $compte->setSolde("0");
             $data=date("Y").date("m").date("d").date("H").date("i").date("s");
-            $comptes->setNumerCompte($data);
-           $comptes->setPartenaire($partenaire);
+            $compte->setNumerCompte($data);
+            $compte->setPartenaire($partenaire);
+            $partenaire->setStatut('actif');
+
             //$comptes->setPartenaire($partenaire->getId());
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($partenaire);
-            $entityManager->persist($comptes);
+            $entityManager->persist($compte);
             $entityManager->flush();
             $user = new User();
             $user->setUsername($partenaire->getEmail());
@@ -64,19 +69,40 @@ class PartenaireController extends AbstractFOSRestController
             $user->setRoles(['ROLE_AdminPartenaire']);
             $user->setPrenom($partenaire->getPrenom());
             $user->setNom($partenaire->getNom());
-            $entreprise=$partenaire->getId()."";
-            $user->setEntreprise($entreprise);
+            $user->setPartenaire($partenaire);
             $user->setAdresse($partenaire->getAdresse());
-            //$user->setCompte($comptes->getId());
-           $compte=$comptes->getId()."";
-           $user->setCompte($compte);
+            $user->setCompte($compte);
             $user->setTelephone($partenaire->getTelephone());
-            $user->setStatut('actif');
+            $user->setStatut($partenaire->getStatut());
             $user->setImageFile($file);
 
             $entityManager->persist($user);
             $entityManager->flush();
-            return $this->handleView($this->view(['status'=>'le partenaire a été crée'],Response::HTTP_CREATED));
+            $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+        
+        // Instantiate Dompdf with our options
+        $dompdf = new Dompdf($pdfOptions);
+        
+        // Retrieve the HTML generated in our twig file
+        $html = $this->renderView('partenaire/contrat.html.twig', [
+            'partenaire' => $partenaire
+        ]);
+        
+        // Load HTML to Dompdf
+        $dompdf->loadHtml($html);
+        
+        // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
+        $dompdf->setPaper('A4', 'portrait');
+
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser (force download)
+        $dompdf->stream("mypdf.pdf", [
+            "Attachment" => true
+        ]);
+            //return $this->handleView($this->view(['status'=>'le partenaire a été crée'],Response::HTTP_CREATED));
         }
         return $this->handleView($this->view($form->getErrors()));
 

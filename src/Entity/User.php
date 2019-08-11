@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -16,7 +15,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @Vich\Uploadable
  * @UniqueEntity(fields={"username"}, message="ce username existe déja")
  * @UniqueEntity(fields={"telephone"}, message="ce numéro de telephone existe déja")
-
  */
 class User implements UserInterface
 {
@@ -72,7 +70,6 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255,nullable=true)
-    
      */
     private $imageName;
 
@@ -83,15 +80,8 @@ class User implements UserInterface
      *     mimeTypes={"image/jpeg", "image/png", "image/gif"},
      *     mimeTypesMessage = "Please upload a valid Image"
      *     )
-     
-    
      */
     private $imageFile;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $compte;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -105,15 +95,20 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     */
-    private $entreprise;
-
-    /**
-     * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="vous n'avez pas saisi l'adresse")
 
      */
     private $adresse;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Partenaire")
+     */
+    private $partenaire;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Compte")
+     */
+    private $compte;
 
     public function getId(): ?int
     {
@@ -156,7 +151,7 @@ class User implements UserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+       // $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
@@ -253,19 +248,6 @@ class User implements UserInterface
         return $this->imageFile;
     }
 
-
-    public function getCompte(): ?string
-    {
-        return $this->compte;
-    }
-
-    public function setCompte(string $compte): self
-    {
-        $this->compte = $compte;
-
-        return $this;
-    }
-
     public function getStatut(): ?string
     {
         return $this->statut;
@@ -290,18 +272,6 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getEntreprise(): ?string
-    {
-        return $this->entreprise;
-    }
-
-    public function setEntreprise(string $entreprise): self
-    {
-        $this->entreprise = $entreprise;
-
-        return $this;
-    }
-
     public function getAdresse(): ?string
     {
         return $this->adresse;
@@ -310,6 +280,31 @@ class User implements UserInterface
     public function setAdresse(string $adresse): self
     {
         $this->adresse = $adresse;
+
+        return $this;
+    }
+
+
+    public function getPartenaire(): ?Partenaire
+    {
+        return $this->partenaire;
+    }
+
+    public function setPartenaire(?Partenaire $partenaire): self
+    {
+        $this->partenaire = $partenaire;
+
+        return $this;
+    }
+
+    public function getCompte(): ?Compte
+    {
+        return $this->compte;
+    }
+
+    public function setCompte(?Compte $compte): self
+    {
+        $this->compte = $compte;
 
         return $this;
     }

@@ -67,19 +67,25 @@ class RegistrationController extends AbstractFOSRestController
                 )
             );
             $utilisateur = $this->getUser();
+
+
+           
         if($utilisateur->getRoles()[0]=='ROLE_SUPERADMIN'){
-            $user->setEntreprise('WARI');
+            //$user->setPartenaire($utilisateur->getId());
+            //$user->setEntreprise('WARI');
             $user->setRoles(['ROLE_CAISSIER']);
-            $user->setCompte('WARI');
+            //peut etre nulle
+            //$user->setCompte('WARI');
 
         }
-        else if($utilisateur->getRoles()[0]=='ROLE_AdminPartenaire'){
-                $user->setEntreprise($utilisateur->getEntreprise());
+        if($utilisateur->getRoles()[0]=='ROLE_AdminPartenaire'){
+                //$user->setEntreprise($utilisateur->getEntreprise());
+                $user->setPartenaire($utilisateur->getPartenaire());
                 $user->setRoles(['ROLE_USER']);
                 $user->setCompte($utilisateur->getCompte());
 
         }
-       
+            $user->setStatut('actif');
             $user->setUpdatedAt(new \Datetime());
             $user->setImageFile($file);
             $entityManager = $this->getDoctrine()->getManager();

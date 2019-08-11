@@ -18,12 +18,12 @@ class UserFxture extends Fixture
         $user->setNom("sall");
         $user->setTelephone("776981425");
         $user->setImageName("capture");
-        $user->setCompte("WARI");
         $user->setStatut("actif");
         $user->setUpdatedAt(new \DateTime());
-        $user->setEntreprise("WARI");
         $user->setAdresse("dakar");
+    
         $manager->persist($user);
+
 
         $manager->flush();
     }

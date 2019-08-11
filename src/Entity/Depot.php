@@ -39,9 +39,11 @@ class Depot
     private $compte;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $caissier;
+    private $utilisateur;
+
 
     public function getId(): ?int
     {
@@ -84,15 +86,17 @@ class Depot
         return $this;
     }
 
-    public function getCaissier(): ?string
+    public function getUtilisateur(): ?User
     {
-        return $this->caissier;
+        return $this->utilisateur;
     }
 
-    public function setCaissier(string $caissier): self
+    public function setUtilisateur(?User $utilisateur): self
     {
-        $this->caissier = $caissier;
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }
+
+   
 }

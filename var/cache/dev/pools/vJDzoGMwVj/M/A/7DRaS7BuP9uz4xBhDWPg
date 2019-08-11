@@ -21,6 +21,7 @@ return $getExpiry ? PHP_INT_MAX : Hydrator::hydrate(
                     'imageName',
                     'prenom',
                     'nom',
+                    'statut',
                 ],
             ],
         ],

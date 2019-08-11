@@ -15,7 +15,7 @@ return $getExpiry ? PHP_INT_MAX : Hydrator::hydrate(
                     'montant',
                     'dateDepot',
                     'compte',
-                    'caissier',
+                    'utilisateur',
                 ],
             ],
         ],

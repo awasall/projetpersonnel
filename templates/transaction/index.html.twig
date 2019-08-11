@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Transaction index{% endblock %}
+
+{% block body %}
+    <h1>Transaction index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Code</th>
+                <th>PrenomEnv</th>
+                <th>NomEnv</th>
+                <th>TelephoneEn</th>
+                <th>TypePieceEnv</th>
+                <th>NumPieceEnv</th>
+                <th>PrenomBenef</th>
+                <th>NomBenef</th>
+                <th>TypePieceBenef</th>
+                <th>NumPieceBenef</th>
+                <th>TelephoneBenef</th>
+                <th>DateEnv</th>
+                <th>DateRetrait</th>
+                <th>Montant</th>
+                <th>CommisionEnv</th>
+                <th>CommissionRetr</th>
+                <th>CommissionPropre</th>
+                <th>Frais</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for transaction in transactions %}
+            <tr>
+                <td>{{ transaction.id }}</td>
+                <td>{{ transaction.code }}</td>
+                <td>{{ transaction.prenomEnv }}</td>
+                <td>{{ transaction.nomEnv }}</td>
+                <td>{{ transaction.telephoneEn }}</td>
+                <td>{{ transaction.typePieceEnv }}</td>
+                <td>{{ transaction.numPieceEnv }}</td>
+                <td>{{ transaction.prenomBenef }}</td>
+                <td>{{ transaction.nomBenef }}</td>
+                <td>{{ transaction.typePieceBenef }}</td>
+                <td>{{ transaction.numPieceBenef }}</td>
+                <td>{{ transaction.telephoneBenef }}</td>
+                <td>{{ transaction.dateEnv ? transaction.dateEnv|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ transaction.dateRetrait ? transaction.dateRetrait|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ transaction.montant }}</td>
+                <td>{{ transaction.commisionEnv }}</td>
+                <td>{{ transaction.commissionRetr }}</td>
+                <td>{{ transaction.commissionPropre }}</td>
+                <td>{{ transaction.frais }}</td>
+                <td>
+                    <a href="{{ path('transaction_show', {'id': transaction.id}) }}">show</a>
+                    <a href="{{ path('transaction_edit', {'id': transaction.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="20">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('transaction_new') }}">Create new</a>
+{% endblock %}
