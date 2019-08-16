@@ -27,7 +27,15 @@ class RegistrationFormType extends AbstractType
                 // this is read and encoded in the controller
                 'mapped' => false
             ])
-            
+            ->add('role', ChoiceType::class, [
+                'choices'  => [
+                    'Utilisateur' => "USER",
+                    'Admin Partenaire' => "AdminPartenaire",
+                    'Admin Simple' => "AdminSimple",
+                    'Caissier' => "Caissier"
+
+                ],
+            ])
             ->add('prenom')
             ->add('nom')
             ->add('telephone')

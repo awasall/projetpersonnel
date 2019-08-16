@@ -149,5 +149,33 @@ class PartenaireController extends AbstractFOSRestController
         return new JsonResponse($data);
     }
 
+    /** 
+     * @Route("/partenairestatut/{id}", name="partenairestatut", methods={"PUT"})
+     * @Security("has_role('ROLE_SUPERADMIN') ")
+
+     */
+    public function statut(Partenaire $partenaire,EntityManagerInterface $entityManager)
+    {
+        if($partenaire->getStatut()=="actif")
+        {
+            $partenaire->setStatut("bloquer");
+        }
+        else
+        {
+            $partenaire->setStatut("actif");
+        
+        }
+        $entityManager->persist($partenaire);
+        $entityManager->flush();
+        $data = [
+            'status' => 200,
+            'message' => 'Le partenaire a bien été mis à jour'
+        ];
+        return new JsonResponse($data);
+    }
+
+
+    
+
 
 }

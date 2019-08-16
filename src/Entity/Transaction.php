@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource()
@@ -20,115 +21,148 @@ class Transaction
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"envoi"})
      */
     private $code;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"envoi"})
      */
     private $prenomEnv;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"envoi"})
      */
     private $nomEnv;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"envoi"})
      */
     private $telephoneEn;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"envoi"})
      */
     private $typePieceEnv;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"envoi"})
      */
     private $numPieceEnv;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Compte")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"envoi"})
      */
     private $CompteEnv;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"envoi"})
      */
     private $prenomBenef;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"envoi"})
      */
     private $nomBenef;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"envoi"})
      */
     private $typePieceBenef;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"envoi"})
      */
     private $numPieceBenef;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"envoi"})
      */
     private $telephoneBenef;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"envoi"})
      */
     private $dateEnv;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"envoi"})
      */
     private $dateRetrait;
 
     /**
      * @ORM\Column(type="bigint")
+     * @Groups({"envoi"})
      */
     private $montant;
 
     /**
      * @ORM\Column(type="bigint")
+     * @Groups({"envoi"})
      */
     private $commisionEnv;
 
+
     /**
      * @ORM\Column(type="bigint")
+     * @Groups({"envoi"})
      */
     private $commissionRetr;
 
     /**
      * @ORM\Column(type="bigint")
+     * @Groups({"envoi"})
      */
     private $commissionPropre;
 
     /**
      * @ORM\Column(type="bigint")
+     * @Groups({"envoi"})
      */
     private $frais;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"envoi"})
      */
     private $statut;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"envoi"})
      */
     private $userEnv;
 
     /**
      * @ORM\Column(type="bigint")
+     * @Groups({"envoi"})
      */
     private $commisionEtat;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
+     */
+    private $userRetrait;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Compte")
+     */
+    private $compteRetrait;
 
     public function getId(): ?int
     {
@@ -395,6 +429,30 @@ class Transaction
     public function setCommisionEtat(int $commisionEtat): self
     {
         $this->commisionEtat = $commisionEtat;
+
+        return $this;
+    }
+
+    public function getUserRetrait(): ?User
+    {
+        return $this->userRetrait;
+    }
+
+    public function setUserRetrait(?User $userRetrait): self
+    {
+        $this->userRetrait = $userRetrait;
+
+        return $this;
+    }
+
+    public function getCompteRetrait(): ?Compte
+    {
+        return $this->compteRetrait;
+    }
+
+    public function setCompteRetrait(?Compte $compteRetrait): self
+    {
+        $this->compteRetrait = $compteRetrait;
 
         return $this;
     }

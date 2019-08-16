@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Form\AffectationType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
@@ -57,34 +58,39 @@ class RegistrationController extends AbstractFOSRestController
    
         }
         
-
         if ($form->isSubmitted() && $form->isValid()) {
             // encode the plain password
             $user->setPassword(
-                $passwordEncoder->encodePassword(
-                    $user,
+                $passwordEncoder->encodePassword($user,
                     $form->get('plainPassword')->getData()
                 )
             );
             $utilisateur = $this->getUser();
 
-
+        if($utilisateur->getRoles()[0]=="ROLE_AdminPartenaire"){
+            
+            $user->setPartenaire($utilisateur->getPartenaire());
+            
+        }
            
-        if($utilisateur->getRoles()[0]=='ROLE_SUPERADMIN'){
-            //$user->setPartenaire($utilisateur->getId());
-            //$user->setEntreprise('WARI');
-            $user->setRoles(['ROLE_CAISSIER']);
-            //peut etre nulle
-            //$user->setCompte('WARI');
+        if($user->getRole()=='USER'){
+            
+            $user->setRoles(['ROLE_USER']);
+            
+        }
+        if($user->getRole()=='AdminPartenaire'){
+            $user->setRoles(["ROLE_AdminPartenaire"]);
 
         }
-        if($utilisateur->getRoles()[0]=='ROLE_AdminPartenaire'){
-                //$user->setEntreprise($utilisateur->getEntreprise());
-                $user->setPartenaire($utilisateur->getPartenaire());
-                $user->setRoles(['ROLE_USER']);
-                $user->setCompte($utilisateur->getCompte());
+        if($user->getRole()=='AdminSimple'){
+            $user->setRoles(["ROLE_AdminSimple"]);
 
         }
+        if($user->getRole()=='Caissier'){
+            $user->setRoles(["ROLE_CAISSIER"]);
+
+        }
+        
             $user->setStatut('actif');
             $user->setUpdatedAt(new \Datetime());
             $user->setImageFile($file);
@@ -96,6 +102,8 @@ class RegistrationController extends AbstractFOSRestController
         return $this->handleView($this->view($form->getErrors()));
 
     }
+    
+   
     /**
      * @Route("/login", name="login", methods={"POST"})
      */
@@ -132,5 +140,35 @@ class RegistrationController extends AbstractFOSRestController
         ];
         return new JsonResponse($data);
     }
+    /** 
+     * @Route("/affectation/{id}", name="affectation", methods={"PUT"})
+     */
+    public function affectation(User $user,ValidatorInterface $validator,Request $request,EntityManagerInterface $entityManager)
+    {
+        $form = $this->createForm(AffectationType::class, $user);
+        $form->handleRequest($request);
+        $data=json_decode($request->getContent(),true);
+        $form->submit($data);
+        $errors = $validator->validate($user);
+        if (count($errors) > 0) {
+            $errorsString = (string) $errors;
+            return new Response($errorsString);
+        }
+        if ($form->isSubmitted() && $form->isValid()) {
+            $utilisateur = $this->getUser();
+            if($utilisateur->getPartenaire()!=$user->getCompte()->getPartenaire())
+            {
+                
+                return $this->handleView($this->view(['status'=>'Ce compte n\'appartient pas à l\'entreprise'],Response::HTTP_CREATED));
 
-}
+            }
+            $entityManager->persist($user);
+            $entityManager->flush();
+            return $this->handleView($this->view(['status'=>'affectation de compte reussi'],Response::HTTP_CREATED));
+    
+        }
+        return $this->handleView($this->view($form->getErrors()));
+    }
+    }
+
+

@@ -16,9 +16,9 @@ class RetraitType extends AbstractType
             ->add('code')
             ->add('typePieceBenef', ChoiceType::class, [
                 'choices'  => [
-                    'CNI' => 1,
-                    'passport' => 2,
-                    'permi' => 3,
+                    'CNI' => "cni",
+                    'passport' => "passport",
+                    'permi' => "permis",
                 ],
             ])
             ->add('numPieceBenef')

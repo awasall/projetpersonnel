@@ -3,18 +3,22 @@
 namespace App\Controller;
 use App\Entity\User;
 use App\Entity\Compte;
-use App\Entity\Transaction;
-use App\Form\TransactionType;
+use  App\Entity\Partenaire;
 use App\Form\RetraitType;
+use App\Entity\Transaction;
+use App\Form\OperationType;
+use App\Form\TransactionType;
 use App\Repository\TarifRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\TransactionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Doctrine\ORM\EntityManagerInterface;
+
 
 class TransactionController extends AbstractFOSRestController
 {
@@ -37,7 +41,7 @@ class TransactionController extends AbstractFOSRestController
         $form = $this->createForm(TransactionType::class, $transaction);
         $form->handleRequest($request);
         $data=json_decode($request->getContent(),true);
-
+        
         $form->submit($data);
         $errors = $validator->validate($transaction);
         
@@ -51,7 +55,8 @@ class TransactionController extends AbstractFOSRestController
             $transaction->setCode($data);
             $transaction->setdateEnv(new \DateTime());
             $valeur=$transaction->getMontant();
-            $value = $transy->findFrais($valeur);
+            $value= $transy->findFrais($valeur);
+            //var_dump($transaction);die();
             $transaction->setcommisionEnv($value[0]->getValeur()*10/100);
             $transaction->setcommissionRetr($value[0]->getValeur()*20/100);
             $transaction->setcommissionPropre($value[0]->getValeur()*30/100);
@@ -62,7 +67,7 @@ class TransactionController extends AbstractFOSRestController
             $transaction->setUserEnv($user);
             $transaction->setCompteEnv($user->getCompte());
             $compte=$user->getCompte();
-            //var_dump($compte);die();
+            //var_dump($transaction);die();
             $val=$compte->getSolde()-$transaction->getMontant()+$transaction->getcommisionEnv();
             $compte->setSolde($val);
             $entityManager = $this->getDoctrine()->getManager();
@@ -77,39 +82,39 @@ class TransactionController extends AbstractFOSRestController
     }
     //retrait
     /** 
-     * @Route("/api/retrait/{id}", name="statut", methods={"PUT"})
+     * @Route("/api/retrait", name="statut", methods={"POST"})
      */
-    public function retrait(Request $request,TarifRepository $transy,Transaction $transaction,ValidatorInterface $validator,EntityManagerInterface $entityManager)
+    public function retrait(Request $request,TarifRepository $transy,TRansactionRepository $repository,ValidatorInterface $validator,EntityManagerInterface $entityManager)
     {
-        $form = $this->createForm(RetraitType::class, $transaction);
+        $retrait = new Transaction();
+        $form = $this->createForm(RetraitType::class, $retrait);
         $form->handleRequest($request);
         $data=json_decode($request->getContent(),true);
         $form->submit($data);
-        $errors = $validator->validate($transaction);
-        
+        $errors = $validator->validate($retrait);
         if (count($errors) > 0) {
             $errorsString = (string) $errors;
-
             return new Response($errorsString);
         }
+
+        $transaction = $repository->findOneBy(['code' => $retrait->getCode()]);
+       // var_dump($transaction);die();
+        if($transaction->getStatut()=="retirer"){
+            return $this->handleView($this->view(['erreur'=>'deja retirer'],Response::HTTP_UNAUTHORIZED));
+        }
+        
         if ($form->isSubmitted() && $form->isValid()) {
-       $transaction->setDateRetrait(new \DateTime());
-       $transaction->setStatut("retirer");
-       $valeur=$transaction->getMontant();
-            $value = $transy->findFrais($valeur);
-            $transaction->setcommisionEnv($value[0]->getValeur()*10/100);
-            $transaction->setcommissionRetr($value[0]->getValeur()*20/100);
-            $transaction->setcommissionPropre($value[0]->getValeur()*30/100);
-            $transaction->setCommisionEtat($value[0]->getValeur()*40/100);
-            $transaction->setFrais($value[0]->getValeur());
-       $user = $this->getUser();
-       $transaction->setUserEnv($user);
-       $transaction->setCompteEnv($user->getCompte());
-       $compte=$user->getCompte();
-       //var_dump($compte);die();
-       $val=$compte->getSolde()+$transaction->getMontant()+$transaction->getCommisionRetr();
-       $compte->setSolde($val);
-       $entityManager->persist($compte);
+        $transaction->setDateRetrait(new \DateTime());
+        $transaction->setStatut("retirer");
+        $user = $this->getUser();
+        $transaction->setUserRetrait($user);
+        $transaction->setTypePieceBenef($retrait->getTypePieceBenef());
+        $transaction->setNumPieceBenef($retrait->getNumPieceBenef());
+        $transaction->setCompteRetrait($user->getCompte());
+        $compte=$user->getCompte();
+        $val=$compte->getSolde()+$retrait->getMontant()+$retrait->getCommissionRetr();
+        $compte->setSolde($val);
+        $entityManager->persist($compte);
         $entityManager->persist($transaction);
         $entityManager->flush();
         return $this->handleView($this->view(['status'=>'Retrait Effectué'],Response::HTTP_CREATED));
@@ -118,8 +123,6 @@ class TransactionController extends AbstractFOSRestController
     return $this->handleView($this->view($form->getErrors()));
 }
 
-
-    
     /**
      * @Route("/{id}", name="transaction_show", methods={"GET"})
      */
@@ -130,5 +133,33 @@ class TransactionController extends AbstractFOSRestController
         ]);
     }
 
+    //lister opération par partenaire
+    /**
+     * @Route("/api/listeoperation/{id}", name="list_operation", methods={"POST"})
+     */
+    public function list(Partenaire $partenaire, Request $request,TransactionRepository $repo,SerializerInterface $serializer,ValidatorInterface $validator,EntityManagerInterface $entityManager)
+    {
+        $operation = new Transaction();
+       
+        $data=json_decode($request->getContent(),true);
+       
+       // if{} ($form->isSubmitted() ) 
+            $date1=$data['date1'];
+            $date2=$data['date2'];
+            //var_dump($date1);
+            $date1=(new \DateTime($date1));
+            $date2=(new \DateTime($date2));
+        
+            $operation = $repo->afficheOperation($date1,$date2);
+           
+            $data = $serializer->serialize($operation, 'json', ['groups' => 'envoi']);
+            return new Response($data, 200, [
+                'Content-Type' => 'application/json'
     
+            ]);
+            
+  // }
+        
+
+    }
 }

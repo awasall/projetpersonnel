@@ -109,6 +109,10 @@ class User implements UserInterface
      * @ORM\ManyToOne(targetEntity="App\Entity\Compte")
      */
     private $compte;
+    /**
+     * @param string
+     */
+    private $role;
 
     public function getId(): ?int
     {
@@ -305,6 +309,26 @@ class User implements UserInterface
     public function setCompte(?Compte $compte): self
     {
         $this->compte = $compte;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of role
+     */ 
+    public function getRole()
+    {
+        return $this->role;
+    }
+
+    /**
+     * Set the value of role
+     *
+     * @return  self
+     */ 
+    public function setRole($role)
+    {
+        $this->role = $role;
 
         return $this;
     }

@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Transaction;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Transaction|null find($id, $lockMode = null, $lockVersion = null)
@@ -47,5 +47,30 @@ class TransactionRepository extends ServiceEntityRepository
         ;
     }
     */
-    
+   
+    /**
+    * @param $montant
+    * @return Transaction[]
+    */
+    public function afficheOperation($date1,$date2): array
+    {
+        // automatically knows to select Products
+        // the "p" is an alias you'll use in the rest of the query
+        $qb = $this->createQueryBuilder('s')
+        ->andWhere('s.dateEnv BETWEEN :date1 AND :date2 OR s.dateRetrait BETWEEN :date1 AND :date2')
+        //->andWhere('s.userEnv.partenaire.id == :partenaire')
+        ->setParameter('date1',$date1)
+        ->setParameter('date2',$date2) 
+        //->setParameter('partenaire',$partenaire->getId())  
+ 
+        ->getQuery();
+        return $qb->execute();
+
+        // to get just one result:
+        // $product = $qb->setMaxResults(1)->getOneOrNullResult();
+    }
+
+
+
+
 }

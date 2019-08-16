@@ -89,7 +89,7 @@ class __TwigTemplate_200d2d92d2d9fa42236b72664fee2d2b1d36dfd2997392ad199ec96567a
         </p>
         <p>Et :</p>
         <p>
-            [WARI, forme juridique, montant de son capital social, adresse de son siège social, numéro d’immatriculation au RCS et ville où se trouve le greffe qui tient le RCS où il est immatriculé] Représenté par [prénom et nom du représentant
+            [WARI, montant de son capital social, adresse de son siège social, numéro d’immatriculation au RCS et ville où se trouve le greffe qui tient le RCS où il est immatriculé] Représenté par [prénom et nom du représentant
             du client, nature de sa fonction et date à laquelle il a été habilité à signer pour le compte de la société qu’il représente, prénom, nom et fonction de la personne qui l’a habilité]
         </p>
         <p>
@@ -161,7 +161,7 @@ class __TwigTemplate_200d2d92d2d9fa42236b72664fee2d2b1d36dfd2997392ad199ec96567a
                 Le Prestataire <br> [nom du signataire] <br> [signature]
             </div>
             <div class=\"col-6\">
-                Le Client <br> [nom du signataire] <br> [signature]
+                Le Client <br> partenaire.prenom,partenaire.nom<br> [signature]
             </div>
         </div>
     </div>
@@ -215,7 +215,7 @@ class __TwigTemplate_200d2d92d2d9fa42236b72664fee2d2b1d36dfd2997392ad199ec96567a
         </p>
         <p>Et :</p>
         <p>
-            [WARI, forme juridique, montant de son capital social, adresse de son siège social, numéro d’immatriculation au RCS et ville où se trouve le greffe qui tient le RCS où il est immatriculé] Représenté par [prénom et nom du représentant
+            [WARI, montant de son capital social, adresse de son siège social, numéro d’immatriculation au RCS et ville où se trouve le greffe qui tient le RCS où il est immatriculé] Représenté par [prénom et nom du représentant
             du client, nature de sa fonction et date à laquelle il a été habilité à signer pour le compte de la société qu’il représente, prénom, nom et fonction de la personne qui l’a habilité]
         </p>
         <p>
@@ -287,7 +287,7 @@ class __TwigTemplate_200d2d92d2d9fa42236b72664fee2d2b1d36dfd2997392ad199ec96567a
                 Le Prestataire <br> [nom du signataire] <br> [signature]
             </div>
             <div class=\"col-6\">
-                Le Client <br> [nom du signataire] <br> [signature]
+                Le Client <br> partenaire.prenom,partenaire.nom<br> [signature]
             </div>
         </div>
     </div>

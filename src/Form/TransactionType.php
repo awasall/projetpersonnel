@@ -18,9 +18,9 @@ class TransactionType extends AbstractType
             ->add('telephoneEn')
             ->add('typePieceEnv', ChoiceType::class, [
                 'choices'  => [
-                    'CNI' => 1,
-                    'passport' => 2,
-                    'permi' => 3,
+                    'CNI' => 'cni',
+                    'passport' => 'passport',
+                    'permi' => 'permis',
                 ],
             ])
             ->add('numPieceEnv')
@@ -30,8 +30,6 @@ class TransactionType extends AbstractType
 
             
             ->add('montant')
-            
-
         ;
     }
 
