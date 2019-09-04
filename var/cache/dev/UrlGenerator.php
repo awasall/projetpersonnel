@@ -5,6 +5,8 @@
 return [
     '_twig_error_test' => [['code', '_format'], ['_controller' => 'twig.controller.preview_error::previewErrorPageAction', '_format' => 'html'], ['code' => '\\d+'], [['variable', '.', '[^/]++', '_format', true], ['variable', '/', '\\d+', 'code', true], ['text', '/_error']], [], []],
     'compte' => [[], ['_controller' => 'App\\Controller\\CompteController::compte'], [], [['text', '/api/compte']], [], []],
+    'rechercheComptecompte' => [[], ['_controller' => 'App\\Controller\\CompteController::recherchCompte'], [], [['text', '/api/rechercheCompte']], [], []],
+    'list_compte' => [[], ['_controller' => 'App\\Controller\\CompteController::list'], [], [['text', '/api/listeCompte']], [], []],
     'depot' => [[], ['_controller' => 'App\\Controller\\DepotController::versement'], [], [['text', '/api/depot']], [], []],
     'partenaire' => [[], ['_controller' => 'App\\Controller\\PartenaireController::ajout'], [], [['text', '/api/partenaire']], [], []],
     'list_partenaire' => [[], ['_controller' => 'App\\Controller\\PartenaireController::list'], [], [['text', '/api/listepartenaire']], [], []],
@@ -18,6 +20,7 @@ return [
     'statut' => [[], ['_controller' => 'App\\Controller\\TransactionController::retrait'], [], [['text', '/api/retrait']], [], []],
     'transaction_show' => [['id'], ['_controller' => 'App\\Controller\\TransactionController::show'], [], [['variable', '/', '[^/]++', 'id', true]], [], []],
     'list_operation' => [['id'], ['_controller' => 'App\\Controller\\TransactionController::list'], [], [['variable', '/', '[^/]++', 'id', true], ['text', '/api/listeoperation']], [], []],
+    'rechercheCode' => [[], ['_controller' => 'App\\Controller\\TransactionController::recherchCode'], [], [['text', '/api/rechercheCode']], [], []],
     'api_entrypoint' => [['index', '_format'], ['_controller' => 'api_platform.action.entrypoint', '_format' => '', '_api_respond' => 'true', 'index' => 'index'], ['index' => 'index'], [['variable', '.', '[^/]++', '_format', true], ['variable', '/', 'index', 'index', true], ['text', '/api']], [], []],
     'api_doc' => [['_format'], ['_controller' => 'api_platform.action.documentation', '_format' => '', '_api_respond' => 'true'], [], [['variable', '.', '[^/]++', '_format', true], ['text', '/api/docs']], [], []],
     'api_jsonld_context' => [['shortName', '_format'], ['_controller' => 'api_platform.jsonld.action.context', '_format' => 'jsonld', '_api_respond' => 'true'], ['shortName' => '.+'], [['variable', '.', '[^/]++', '_format', true], ['variable', '/', '.+', 'shortName', true], ['text', '/api/contexts']], [], []],

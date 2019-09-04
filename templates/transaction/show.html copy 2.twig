@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Transaction{% endblock %}
+
+{% block body %}
+    <h1>Transaction</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ transaction.id }}</td>
+            </tr>
+            <tr>
+                <th>Code</th>
+                <td>{{ transaction.code }}</td>
+            </tr>
+            <tr>
+                <th>PrenomEnv</th>
+                <td>{{ transaction.prenomEnv }}</td>
+            </tr>
+            <tr>
+                <th>NomEnv</th>
+                <td>{{ transaction.nomEnv }}</td>
+            </tr>
+            <tr>
+                <th>TelephoneEn</th>
+                <td>{{ transaction.telephoneEn }}</td>
+            </tr>
+            <tr>
+                <th>TypePieceEnv</th>
+                <td>{{ transaction.typePieceEnv }}</td>
+            </tr>
+            <tr>
+                <th>NumPieceEnv</th>
+                <td>{{ transaction.numPieceEnv }}</td>
+            </tr>
+            <tr>
+                <th>PrenomBenef</th>
+                <td>{{ transaction.prenomBenef }}</td>
+            </tr>
+            <tr>
+                <th>NomBenef</th>
+                <td>{{ transaction.nomBenef }}</td>
+            </tr>
+            <tr>
+                <th>TypePieceBenef</th>
+                <td>{{ transaction.typePieceBenef }}</td>
+            </tr>
+            <tr>
+                <th>NumPieceBenef</th>
+                <td>{{ transaction.numPieceBenef }}</td>
+            </tr>
+            <tr>
+                <th>TelephoneBenef</th>
+                <td>{{ transaction.telephoneBenef }}</td>
+            </tr>
+            <tr>
+                <th>DateEnv</th>
+                <td>{{ transaction.dateEnv ? transaction.dateEnv|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>DateRetrait</th>
+                <td>{{ transaction.dateRetrait ? transaction.dateRetrait|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Montant</th>
+                <td>{{ transaction.montant }}</td>
+            </tr>
+            <tr>
+                <th>CommisionEnv</th>
+                <td>{{ transaction.commisionEnv }}</td>
+            </tr>
+            <tr>
+                <th>CommissionRetr</th>
+                <td>{{ transaction.commissionRetr }}</td>
+            </tr>
+            <tr>
+                <th>CommissionPropre</th>
+                <td>{{ transaction.commissionPropre }}</td>
+            </tr>
+            <tr>
+                <th>Frais</th>
+                <td>{{ transaction.frais }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('transaction_index') }}">back to list</a>
+
+    <a href="{{ path('transaction_edit', {'id': transaction.id}) }}">edit</a>
+
+    {{ include('transaction/_delete_form.html.twig') }}
+{% endblock %}

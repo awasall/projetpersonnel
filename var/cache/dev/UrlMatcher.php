@@ -9,6 +9,8 @@ return [
     false, // $matchHost
     [ // $staticRoutes
         '/api/compte' => [[['_route' => 'compte', '_controller' => 'App\\Controller\\CompteController::compte'], null, ['POST' => 0], null, false, false, null]],
+        '/api/rechercheCompte' => [[['_route' => 'rechercheComptecompte', '_controller' => 'App\\Controller\\CompteController::recherchCompte'], null, ['POST' => 0], null, false, false, null]],
+        '/api/listeCompte' => [[['_route' => 'list_compte', '_controller' => 'App\\Controller\\CompteController::list'], null, ['GET' => 0], null, false, false, null]],
         '/api/depot' => [[['_route' => 'depot', '_controller' => 'App\\Controller\\DepotController::versement'], null, ['POST' => 0], null, false, false, null]],
         '/api/partenaire' => [[['_route' => 'partenaire', '_controller' => 'App\\Controller\\PartenaireController::ajout'], null, ['POST' => 0], null, false, false, null]],
         '/api/listepartenaire' => [[['_route' => 'list_partenaire', '_controller' => 'App\\Controller\\PartenaireController::list'], null, ['GET' => 0], null, false, false, null]],
@@ -17,6 +19,7 @@ return [
         '/' => [[['_route' => 'transaction_index', '_controller' => 'App\\Controller\\TransactionController::index'], null, ['GET' => 0], null, false, false, null]],
         '/api/transaction' => [[['_route' => 'transaction', '_controller' => 'App\\Controller\\TransactionController::new'], null, ['POST' => 0], null, false, false, null]],
         '/api/retrait' => [[['_route' => 'statut', '_controller' => 'App\\Controller\\TransactionController::retrait'], null, ['POST' => 0], null, false, false, null]],
+        '/api/rechercheCode' => [[['_route' => 'rechercheCode', '_controller' => 'App\\Controller\\TransactionController::recherchCode'], null, ['POST' => 0], null, false, false, null]],
         '/api/login_check' => [[['_route' => 'api_login_check'], null, null, null, false, false, null]],
     ],
     [ // $regexpList

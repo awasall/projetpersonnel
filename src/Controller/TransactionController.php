@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controller;
 use App\Entity\User;
 use App\Entity\Compte;
@@ -18,7 +17,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class TransactionController extends AbstractFOSRestController
 {
@@ -67,6 +67,10 @@ class TransactionController extends AbstractFOSRestController
             $transaction->setUserEnv($user);
             $transaction->setCompteEnv($user->getCompte());
             $compte=$user->getCompte();
+            if ($transaction->getMontant() > $compte->getSolde()){
+                return $this->handleView($this->view(['erreur montant'=>'ce montant est supérieur au solde'],Response::HTTP_UNAUTHORIZED));
+            }
+    
             //var_dump($transaction);die();
             $val=$compte->getSolde()-$transaction->getMontant()+$transaction->getcommisionEnv();
             $compte->setSolde($val);
@@ -74,7 +78,7 @@ class TransactionController extends AbstractFOSRestController
             $entityManager->persist($compte);
             $entityManager->persist($transaction);
             $entityManager->flush();
-
+            
             return $this->handleView($this->view(['status'=>'Transaction Effectué'],Response::HTTP_CREATED));
         }
         return $this->handleView($this->view($form->getErrors()));
@@ -99,11 +103,9 @@ class TransactionController extends AbstractFOSRestController
 
         $transaction = $repository->findOneBy(['code' => $retrait->getCode()]);
        // var_dump($transaction);die();
-        if($transaction->getStatut()=="retirer"){
-            return $this->handleView($this->view(['erreur'=>'deja retirer'],Response::HTTP_UNAUTHORIZED));
-        }
         
-        if ($form->isSubmitted() && $form->isValid()) {
+        
+        //if ($form->isSubmitted() && $form->isValid()) {
         $transaction->setDateRetrait(new \DateTime());
         $transaction->setStatut("retirer");
         $user = $this->getUser();
@@ -119,8 +121,8 @@ class TransactionController extends AbstractFOSRestController
         $entityManager->flush();
         return $this->handleView($this->view(['status'=>'Retrait Effectué'],Response::HTTP_CREATED));
 
-    }
-    return $this->handleView($this->view($form->getErrors()));
+ //   }
+    //return $this->handleView($this->view($form->getErrors()));
 }
 
     /**
@@ -149,10 +151,17 @@ class TransactionController extends AbstractFOSRestController
             //var_dump($date1);
             $date1=(new \DateTime($date1));
             $date2=(new \DateTime($date2));
-        
+
+            $op=[];
             $operation = $repo->afficheOperation($date1,$date2);
+            for ($i=0; $i < count($operation); $i++) { 
+                if($operation[$i]->getUserEnv()->getPartenaire()==$partenaire || ($operation[$i]->getUserRetrait()!=NULL && $operation[$i]->getUserRetrait()->getPartenaire()==$partenaire))
+                {
+                    $op[]=$operation[$i];
+                }
+            }
            
-            $data = $serializer->serialize($operation, 'json', ['groups' => 'envoi']);
+            $data = $serializer->serialize($op, 'json', ['groups' => 'envoi']);
             return new Response($data, 200, [
                 'Content-Type' => 'application/json'
     
@@ -161,5 +170,30 @@ class TransactionController extends AbstractFOSRestController
   // }
         
 
+    }
+    //rechercher code
+     /**
+    * @Route("/api/rechercheCode",name="rechercheCode",methods={"POST"})
+     */
+    public function recherchCode(TransactionRepository $repository , Request $request,SerializerInterface $serializer,ValidatorInterface $validator,EntityManagerInterface $entityManager)
+    {
+        
+        $data=json_decode($request->getContent(),true);
+        $ncode=$data['code'];
+
+        $transaction = $repository->findOneBy(['code' => $ncode]);
+        //var_dump($compt);die();
+        if($transaction->getStatut()=="retirer"){
+            return $this->handleView($this->view(['erreur'=>'deja retirer'],Response::HTTP_UNAUTHORIZED));
+        }
+        if(!$transaction){
+            return $this->handleView($this->view(['erreur'=>'ce code nexiste '],Response::HTTP_UNAUTHORIZED));
+  
+        }
+        $data = $serializer->serialize($transaction, 'json');
+            return new Response($data, 200, [
+                'Content-Type' => 'application/json'
+    
+            ]);
     }
 }

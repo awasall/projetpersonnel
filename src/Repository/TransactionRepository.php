@@ -58,10 +58,8 @@ class TransactionRepository extends ServiceEntityRepository
         // the "p" is an alias you'll use in the rest of the query
         $qb = $this->createQueryBuilder('s')
         ->andWhere('s.dateEnv BETWEEN :date1 AND :date2 OR s.dateRetrait BETWEEN :date1 AND :date2')
-        //->andWhere('s.userEnv.partenaire.id == :partenaire')
         ->setParameter('date1',$date1)
         ->setParameter('date2',$date2) 
-        //->setParameter('partenaire',$partenaire->getId())  
  
         ->getQuery();
         return $qb->execute();

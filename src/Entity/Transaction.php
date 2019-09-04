@@ -5,6 +5,8 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * @ApiResource()
@@ -107,6 +109,8 @@ class Transaction
     /**
      * @ORM\Column(type="bigint")
      * @Groups({"envoi"})
+     * @Assert\Positive(message="le montant ne doit pas etre négatif ou le montant ne doit pas etre egal a 0")
+
      */
     private $montant;
 
