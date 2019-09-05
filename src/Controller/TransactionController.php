@@ -183,13 +183,14 @@ class TransactionController extends AbstractFOSRestController
 
         $transaction = $repository->findOneBy(['code' => $ncode]);
         //var_dump($compt);die();
+        if(!$transaction){
+            return $this->handleView($this->view(['erreur'=>'ce code n\'existe pas '],Response::HTTP_UNAUTHORIZED));
+  
+        }
         if($transaction->getStatut()=="retirer"){
             return $this->handleView($this->view(['erreur'=>'deja retirer'],Response::HTTP_UNAUTHORIZED));
         }
-        if(!$transaction){
-            return $this->handleView($this->view(['erreur'=>'ce code nexiste '],Response::HTTP_UNAUTHORIZED));
-  
-        }
+        
         $data = $serializer->serialize($transaction, 'json');
             return new Response($data, 200, [
                 'Content-Type' => 'application/json'

@@ -14,6 +14,7 @@ return [
     'partenairestatut' => [['id'], ['_controller' => 'App\\Controller\\PartenaireController::statut'], [], [['variable', '/', '[^/]++', 'id', true], ['text', '/api/partenairestatut']], [], []],
     'app_register' => [[], ['_controller' => 'App\\Controller\\RegistrationController::register'], [], [['text', '/api/register']], [], []],
     'login' => [[], ['_controller' => 'App\\Controller\\RegistrationController::login'], [], [['text', '/api/login']], [], []],
+    'list_user' => [[], ['_controller' => 'App\\Controller\\RegistrationController::list'], [], [['text', '/api/listeuser']], [], []],
     'affectation' => [['id'], ['_controller' => 'App\\Controller\\RegistrationController::affectation'], [], [['variable', '/', '[^/]++', 'id', true], ['text', '/api/affectation']], [], []],
     'transaction_index' => [[], ['_controller' => 'App\\Controller\\TransactionController::index'], [], [['text', '/']], [], []],
     'transaction' => [[], ['_controller' => 'App\\Controller\\TransactionController::new'], [], [['text', '/api/transaction']], [], []],

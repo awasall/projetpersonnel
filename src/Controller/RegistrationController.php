@@ -3,18 +3,19 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\RegistrationFormType;
 use App\Form\AffectationType;
+use App\Form\RegistrationFormType;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 
 
@@ -139,6 +140,27 @@ class RegistrationController extends AbstractFOSRestController
             'message' => 'Le partenaire a bien été mis à jour'
         ];
         return new JsonResponse($data);
+    }
+    /**
+     * @Route("/listeuser", name="list_user", methods={"GET"})
+     */
+    public function list(UserRepository $repo,SerializerInterface $serializer)
+    {
+        $user = $this->getUser();
+
+        if($user->getRoles()[0]=="ROLE_AdminPartenaire" || $user->getRoles()[0]=="ROLE_AdminSimple"){
+            $users = $repo->findBy(['partenaire'=>$user->getPartenaire()]);
+        
+        }
+        else if($user->getRoles()[0]=="ROLE_SUPER_ADMIN" ){
+            $users = $repo->findAll();
+        }
+        $data = $serializer->serialize($users, 'json');
+        return new Response($data, 200, [
+            'Content-Type' => 'application/json'
+
+        ]);
+            
     }
     /** 
      * @Route("/affectation/{id}", name="affectation", methods={"PUT"})

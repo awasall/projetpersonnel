@@ -16,6 +16,7 @@ return [
         '/api/listepartenaire' => [[['_route' => 'list_partenaire', '_controller' => 'App\\Controller\\PartenaireController::list'], null, ['GET' => 0], null, false, false, null]],
         '/api/register' => [[['_route' => 'app_register', '_controller' => 'App\\Controller\\RegistrationController::register'], null, ['POST' => 0], null, false, false, null]],
         '/api/login' => [[['_route' => 'login', '_controller' => 'App\\Controller\\RegistrationController::login'], null, ['POST' => 0], null, false, false, null]],
+        '/api/listeuser' => [[['_route' => 'list_user', '_controller' => 'App\\Controller\\RegistrationController::list'], null, ['GET' => 0], null, false, false, null]],
         '/' => [[['_route' => 'transaction_index', '_controller' => 'App\\Controller\\TransactionController::index'], null, ['GET' => 0], null, false, false, null]],
         '/api/transaction' => [[['_route' => 'transaction', '_controller' => 'App\\Controller\\TransactionController::new'], null, ['POST' => 0], null, false, false, null]],
         '/api/retrait' => [[['_route' => 'statut', '_controller' => 'App\\Controller\\TransactionController::retrait'], null, ['POST' => 0], null, false, false, null]],
