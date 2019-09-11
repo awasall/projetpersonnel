@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Controller;
-
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\FOSRestController;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,6 +10,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Form\RechercheCompteType;
 use App\Repository\CompteRepository;
 
@@ -23,7 +23,7 @@ class CompteController extends FOSRestController
     * @Route("/api/compte",name="compte",methods={"POST"})
      * @Security("has_role('ROLE_SUPERADMIN')")
     */
-    public function compte(Request $request)
+    public function compte(Request $request,SerializerInterface $serializer)
     {
         $compte = new Compte();
         $form=$this->createForm(CompteType::class,$compte);
@@ -33,7 +33,7 @@ class CompteController extends FOSRestController
             return $this->handleView($this->view(['erreur'=>'ce partenaire nexiste pas'],Response::HTTP_UNAUTHORIZED));
   
         }
-        if($form->isSubmitted() && $form->isValid()){
+        //if($form->isSubmitted() && $form->isValid()){
             $compte->setSolde("0");
             $data=date("Y").date("m").date("d").date("H").date("i").date("s");
             $compte->setNumerCompte($data);
@@ -41,13 +41,15 @@ class CompteController extends FOSRestController
             $em=$this->getDoctrine()->getManager();
             $em->persist($compte);
             $em->flush();
-    
-            return $this->handleView($this->view(['status'=>'compte bien ajouté'],Response::HTTP_CREATED));
+            $data = [
+                'status' => 200,
+                'message' => 'Le compte a bien été ajouté'
+            ];
+            return new JsonResponse($data);
+            //return $this->handleView($this->view($data,Response::HTTP_CREATED));
 
-        }
-        return $this->handleView($this->view($form->getErrors()));
-
-        
+       // }
+       // return $this->handleView($this->view($form->getErrors()));  
     }
 
     //deposer
@@ -88,4 +90,25 @@ class CompteController extends FOSRestController
 
     }
 
+
+     /**
+     * @Route("/api/listecompP", name="listcompP", methods={"GET"})
+     * @Security("has_role('ROLE_AdminPartenaire') or has_role('ROLE_SUPERADMIN')")
+     */
+    public function listCompteP(CompteRepository $repo,SerializerInterface $serializer)
+    {
+        $user = $this->getUser();
+        if($user->getRoles()[0]=="ROLE_AdminPartenaire" || $user->getRoles()[0]=="ROLE_AdminSimple"){
+            $users = $repo->findBy(['partenaire'=>$user->getPartenaire()]);
+        }
+        elseif($user->getRoles()[0]=="ROLE_SUPERADMIN" ){
+            $users = $repo->findAll();
+        }
+        $data = $serializer->serialize($users, 'json');
+        return new Response($data, 200, [
+            'Content-Type' => 'application/json'
+
+        ]);
+            
+    }
 }

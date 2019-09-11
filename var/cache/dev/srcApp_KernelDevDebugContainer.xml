@@ -5264,6 +5264,12 @@
         <argument>make:migration</argument>
       </call>
     </service>
+    <service id=".service_locator.niLDFWa" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="serializer" type="service" id="serializer"/>
+      </argument>
+    </service>
     <service id=".service_locator.r2jjwcS" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -5322,6 +5328,15 @@
       <argument type="collection">
         <argument key="entityManager" type="service" id="doctrine.orm.default_entity_manager"/>
         <argument key="partenaire" type="service" id=".errored..service_locator.l9rHAl0.App\Entity\Partenaire"/>
+      </argument>
+    </service>
+    <service id=".service_locator.JU5g30G" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="entityManager" type="service" id="doctrine.orm.default_entity_manager"/>
+        <argument key="repository" type="service" id="App\Repository\PartenaireRepository"/>
+        <argument key="serializer" type="service" id="serializer"/>
+        <argument key="validator" type="service" id="validator"/>
       </argument>
     </service>
     <service id=".service_locator.H3qnu8f" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
@@ -5402,16 +5417,19 @@
         <argument key="validator" type="service" id="validator"/>
       </argument>
     </service>
-    <service id=".service_locator.cT8VvtO" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
+    <service id=".service_locator.BURQepf" class="Symfony\Component\DependencyInjection\ServiceLocator" public="false">
       <tag name="container.service_locator"/>
       <argument type="collection">
+        <argument key="App\Controller\CompteController::compte" type="service" id=".service_locator.niLDFWa"/>
         <argument key="App\Controller\CompteController::list" type="service" id=".service_locator.LGNv.VW"/>
+        <argument key="App\Controller\CompteController::listCompteP" type="service" id=".service_locator.LGNv.VW"/>
         <argument key="App\Controller\CompteController::recherchCompte" type="service" id=".service_locator.r2jjwcS"/>
         <argument key="App\Controller\CompteController::setViewHandler" type="service" id=".service_locator.l2alLEu"/>
         <argument key="App\Controller\DepotController::setViewHandler" type="service" id=".service_locator.l2alLEu"/>
         <argument key="App\Controller\DepotController::versement" type="service" id=".service_locator..dGWmed"/>
         <argument key="App\Controller\PartenaireController::ajout" type="service" id=".service_locator.2B8PUum"/>
         <argument key="App\Controller\PartenaireController::list" type="service" id=".service_locator.Vyr21Xo"/>
+        <argument key="App\Controller\PartenaireController::recherchParte" type="service" id=".service_locator.JU5g30G"/>
         <argument key="App\Controller\PartenaireController::setViewHandler" type="service" id=".service_locator.l2alLEu"/>
         <argument key="App\Controller\PartenaireController::statut" type="service" id=".service_locator.l9rHAl0"/>
         <argument key="App\Controller\PartenaireController::update" type="service" id=".service_locator.fDbIXxi"/>
@@ -5427,13 +5445,16 @@
         <argument key="App\Controller\TransactionController::retrait" type="service" id=".service_locator.k0Un6ND"/>
         <argument key="App\Controller\TransactionController::setViewHandler" type="service" id=".service_locator.l2alLEu"/>
         <argument key="App\Controller\TransactionController::show" type="service" id=".service_locator.EWX.KyZ"/>
+        <argument key="App\Controller\CompteController:compte" type="service" id=".service_locator.niLDFWa"/>
         <argument key="App\Controller\CompteController:list" type="service" id=".service_locator.LGNv.VW"/>
+        <argument key="App\Controller\CompteController:listCompteP" type="service" id=".service_locator.LGNv.VW"/>
         <argument key="App\Controller\CompteController:recherchCompte" type="service" id=".service_locator.r2jjwcS"/>
         <argument key="App\Controller\CompteController:setViewHandler" type="service" id=".service_locator.l2alLEu"/>
         <argument key="App\Controller\DepotController:setViewHandler" type="service" id=".service_locator.l2alLEu"/>
         <argument key="App\Controller\DepotController:versement" type="service" id=".service_locator..dGWmed"/>
         <argument key="App\Controller\PartenaireController:ajout" type="service" id=".service_locator.2B8PUum"/>
         <argument key="App\Controller\PartenaireController:list" type="service" id=".service_locator.Vyr21Xo"/>
+        <argument key="App\Controller\PartenaireController:recherchParte" type="service" id=".service_locator.JU5g30G"/>
         <argument key="App\Controller\PartenaireController:setViewHandler" type="service" id=".service_locator.l2alLEu"/>
         <argument key="App\Controller\PartenaireController:statut" type="service" id=".service_locator.l9rHAl0"/>
         <argument key="App\Controller\PartenaireController:update" type="service" id=".service_locator.fDbIXxi"/>
@@ -5739,12 +5760,12 @@
       <argument type="service" id="security.token_storage"/>
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver" public="false">
-      <argument type="service" id=".service_locator.cT8VvtO"/>
+      <argument type="service" id=".service_locator.BURQepf"/>
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver" public="false"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver" public="false"/>
     <service id="debug.argument_resolver.not_tagged_controller.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver" public="false">
-      <argument type="service" id=".service_locator.cT8VvtO"/>
+      <argument type="service" id=".service_locator.BURQepf"/>
     </service>
     <service id="api_platform.swagger.normalizer.api_gateway.inner" class="ApiPlatform\Core\Swagger\Serializer\DocumentationNormalizer" public="false">
       <argument type="service" id="api_platform.metadata.resource.metadata_factory.cached"/>
@@ -6127,7 +6148,7 @@
     <service id="lexik_jwt_authentication.encoder" alias="lexik_jwt_authentication.encoder.lcobucci" public="true"/>
     <service id="Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface" alias="lexik_jwt_authentication.encoder.lcobucci"/>
     <service id="lexik_jwt_authentication.key_loader" alias="lexik_jwt_authentication.key_loader.raw" public="true"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.cT8VvtO"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.BURQepf"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem" public="false"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
     <service id="api_platform.name_converter" alias="serializer.name_converter.metadata_aware"/>

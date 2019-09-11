@@ -24,7 +24,7 @@ class UserChecker implements UserCheckerInterface
 
         if($user->getPartenaire()!=NULL && $user->getPartenaire()->getStatut()!="actif")
         {
-            throw new Exception('veuillez contacter Wari');
+            throw new Exception('veuillez contacter Wari vous etes bloqué');
  
         }
     }

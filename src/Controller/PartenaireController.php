@@ -78,31 +78,31 @@ class PartenaireController extends AbstractFOSRestController
 
             $entityManager->persist($user);
             $entityManager->flush();
-            $pdfOptions = new Options();
-        $pdfOptions->set('defaultFont', 'Arial');
+        //     $pdfOptions = new Options();
+        // $pdfOptions->set('defaultFont', 'Arial');
         
-        // Instantiate Dompdf with our options
-        $dompdf = new Dompdf($pdfOptions);
+        // // Instantiate Dompdf with our options
+        // $dompdf = new Dompdf($pdfOptions);
         
-        // Retrieve the HTML generated in our twig file
-        $html = $this->renderView('partenaire/contrat.html.twig', [
-            'partenaire' => $partenaire
-        ]);
+        // // Retrieve the HTML generated in our twig file
+        // $html = $this->renderView('partenaire/contrat.html.twig', [
+        //     'partenaire' => $partenaire
+        // ]);
         
-        // Load HTML to Dompdf
-        $dompdf->loadHtml($html);
+        // // Load HTML to Dompdf
+        // $dompdf->loadHtml($html);
         
-        // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
-        $dompdf->setPaper('A4', 'portrait');
+        // // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
+        // $dompdf->setPaper('A4', 'portrait');
 
-        // Render the HTML as PDF
-        $dompdf->render();
+        // // Render the HTML as PDF
+        // $dompdf->render();
 
-        // Output the generated PDF to Browser (force download)
-        $dompdf->stream("mypdf.pdf", [
-            "Attachment" => true
-        ]);
-            //return $this->handleView($this->view(['status'=>'le partenaire a été crée'],Response::HTTP_CREATED));
+        // // Output the generated PDF to Browser (force download)
+        // $dompdf->stream("mypdf.pdf", [
+        //     "Attachment" => true
+        // ]);
+            return $this->handleView($this->view(['status'=>'le partenaire a été crée'],Response::HTTP_CREATED));
         }
         return $this->handleView($this->view($form->getErrors()));
 
@@ -150,7 +150,7 @@ class PartenaireController extends AbstractFOSRestController
     }
 
     /** 
-     * @Route("/partenairestatut/{id}", name="partenairestatut", methods={"PUT"})
+     * @Route("/partenairestatut/{id}", name="partenairestatut", methods={"GET"})
      * @Security("has_role('ROLE_SUPERADMIN') ")
 
      */
@@ -174,7 +174,29 @@ class PartenaireController extends AbstractFOSRestController
         return new JsonResponse($data);
     }
 
+//rechercher partenaire
+     /**
+    * @Route("/rechercheparte",name="rechercheParte",methods={"POST"})
+    * @Security("has_role('ROLE_SUPERADMIN') ")
+     */
+    public function recherchParte(PartenaireRepository $repository , Request $request,SerializerInterface $serializer,ValidatorInterface $validator,EntityManagerInterface $entityManager)
+    {
+        $data=json_decode($request->getContent(),true);
+        $raison=$data['ninea'];
 
+        $partenaire = $repository->findOneBy(['ninea' => $raison]);
+        //var_dump($compt);die();
+        if(!$partenaire){
+            return $this->handleView($this->view(['erreur'=>'ce partenaire n\'existe pas '],Response::HTTP_UNAUTHORIZED));
+  
+        }
+        
+        $data = $serializer->serialize($partenaire, 'json');
+            return new Response($data, 200, [
+                'Content-Type' => 'application/json'
+    
+            ]);
+    }
     
 
 

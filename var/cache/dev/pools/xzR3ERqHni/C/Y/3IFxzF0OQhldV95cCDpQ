@@ -11,20 +11,20 @@ return $getExpiry ? PHP_INT_MAX : Hydrator::hydrate(
     [
         'Symfony\\Component\\Routing\\Annotation\\Route' => [
             'path' => [
-                '/user/{id}',
+                '/statut/{id}',
             ],
             'name' => [
-                'statut',
+                'statutt',
             ],
             'methods' => [
                 [
-                    'PUT',
+                    'GET',
                 ],
             ],
         ],
         'Sensio\\Bundle\\FrameworkExtraBundle\\Configuration\\Security' => [
             'expression' => [
-                1 => 'has_role(\'ROLE_SUPERADMIN\') or has_role(\'ROLE_AdminPartenaire\')',
+                1 => 'has_role(\'ROLE_AdminPartenaire\') or has_role(\'ROLE_SUPERADMIN\') or has_role(\'ROLE_AdminSimple\') ',
             ],
         ],
     ],

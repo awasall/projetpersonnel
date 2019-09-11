@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Exception;
 use App\Entity\User;
 use App\Form\AffectationType;
 use App\Form\RegistrationFormType;
@@ -117,16 +118,20 @@ class RegistrationController extends AbstractFOSRestController
         ]);
     }
     /** 
-     * @Route("/user/{id}", name="statut", methods={"PUT"})
-     * @Security("has_role('ROLE_SUPERADMIN') or has_role('ROLE_AdminPartenaire')")
-
+     * @Route("/statut/{id}", name="statutt", methods={"GET"})
+     * @Security("has_role('ROLE_AdminPartenaire') or has_role('ROLE_SUPERADMIN') or has_role('ROLE_AdminSimple') ")
      */
     public function statut(User $user,EntityManagerInterface $entityManager)
     {
+        $connect=$this-> getUser();
+        if ($connect==$user) {
+            throw new Exception("Vous ne pouvez pas bloquer votre propre compte"); 
+        }elseif ($connect->getRoles()[0]=='ROLE_AdminSimple' && $user->getRoles()[0]=='ROLE_AdminPartenaire') {
+            throw new Exception("Vous ne pouvez pas bloquer votre super admin");
+        }
         if($user->getStatut()=="actif")
         {
             $user->setStatut("bloquer");
-        
         }
         else
         {
@@ -137,24 +142,33 @@ class RegistrationController extends AbstractFOSRestController
         $entityManager->flush();
         $data = [
             'status' => 200,
-            'message' => 'Le partenaire a bien été mis à jour'
+            'message' => 'Lutilisateur a bien été mis à jour'
         ];
         return new JsonResponse($data);
     }
+    
     /**
      * @Route("/listeuser", name="list_user", methods={"GET"})
      */
     public function list(UserRepository $repo,SerializerInterface $serializer)
     {
         $user = $this->getUser();
+        //var_dump($user);die();
 
         if($user->getRoles()[0]=="ROLE_AdminPartenaire" || $user->getRoles()[0]=="ROLE_AdminSimple"){
             $users = $repo->findBy(['partenaire'=>$user->getPartenaire()]);
         
         }
-        else if($user->getRoles()[0]=="ROLE_SUPER_ADMIN" ){
-            $users = $repo->findAll();
+        else if($user->getRoles()[0]=="ROLE_SUPERADMIN" ){
+            $userss = $repo->findAll();
+            $users=[];
+            for ($i=0; $i < count($userss); $i++) { 
+                if ($userss[$i]->getPartenaire()==NULL) {
+                    $users[]=$userss[$i];
+                }
+            }
         }
+        //var_dump($users);die();
         $data = $serializer->serialize($users, 'json');
         return new Response($data, 200, [
             'Content-Type' => 'application/json'

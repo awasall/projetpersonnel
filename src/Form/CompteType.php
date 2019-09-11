@@ -17,7 +17,7 @@ class CompteType extends AbstractType
         $builder
           
             ->add('partenaire',EntityType::class,[
-                'class'=>Partenaire::class,'choice_label'=>'raisonsociale'
+                'class'=>Partenaire::class
             ])
             
             //->add('save',SubmitType::class)

@@ -104,7 +104,6 @@ class TransactionController extends AbstractFOSRestController
         $transaction = $repository->findOneBy(['code' => $retrait->getCode()]);
        // var_dump($transaction);die();
         
-        
         //if ($form->isSubmitted() && $form->isValid()) {
         $transaction->setDateRetrait(new \DateTime());
         $transaction->setStatut("retirer");
@@ -184,7 +183,7 @@ class TransactionController extends AbstractFOSRestController
         $transaction = $repository->findOneBy(['code' => $ncode]);
         //var_dump($compt);die();
         if(!$transaction){
-            return $this->handleView($this->view(['erreur'=>'ce code n\'existe pas '],Response::HTTP_UNAUTHORIZED));
+            return $this->handleView($this->view(['erreur'=>'ce code nest pas valide '],Response::HTTP_UNAUTHORIZED));
   
         }
         if($transaction->getStatut()=="retirer"){
@@ -197,4 +196,5 @@ class TransactionController extends AbstractFOSRestController
     
             ]);
     }
+     
 }
